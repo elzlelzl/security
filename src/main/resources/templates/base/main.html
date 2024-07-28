@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Main Page</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+<script>
+    let count = 0;
+    let uri = window.location.pathname;
+    setInterval(() => {
+        ajaxGet("/check-session", (response) => {
+            count++;
+            if (response.authenticated) {
+                // 인증된 사용자인 경우
+                console.log("인증된 사용자입니다.");
+                // 추가적인 작업 수행
+            } else {
+                // 세션이 만료되거나 인증되지 않은 사용자인 경우
+                console.log("세션이 만료되었거나 인증되지 않은 사용자입니다.");
+                alert("세션이 만료되었습니다.")
+                if (uri != '/login') {
+                    // location.href = '/expired';
+                    location.href = '/login';
+                }
+            }
+        }, () => {
+            alert("세션이 만료되었습니다.")
+            if (uri != '/login') {
+                // location.href = '/expired';
+                location.href = '/login';
+            }
+        });
+    }, 6000);
+
+    function ajaxGet(url, successCallback, errorCallback) {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    successCallback(response);
+                } else {
+                    errorCallback();
+                }
+            }
+        }
+        xhr.send()
+    }
+</script>
+<div class="container">
+  <div class="jumbotron text-center">
+    <h1>Welcome to the Main Page!</h1>
+    <p>You are logged in as <strong>user</strong></p>
+  </div>
+</div>
+</body>
+</html>
